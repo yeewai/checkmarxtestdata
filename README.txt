@@ -1,93 +1,118 @@
-**********
-**********          WebGoat 6.0
-**********          August 23, 2014
-**********
-**
-**  Home Page:              http://webgoat.github.io
-**  Home Page:              http://www.owasp.org/index.php/Category:OWASP_WebGoat_Project
-**  Source Code:            https://github.com/WebGoat/WebGoat
-**  Easy-Run Download:      https://webgoat.atlassian.net/builds/browse/WEB-DAIL/latestSuccessful/artifact/JOB1/WebGoat-Embedded-Tomcat/WebGoat-6.0-SNAPSHOT-war-exec.jar  
-**  User Guide:             http://www.owasp.org/index.php/WebGoat_User_and_Install_Guide_Table_of_Contents
-**  Wiki:                   http://code.google.com/p/webgoat/w/list
-**  FAQ:                    http://code.google.com/p/webgoat/wiki/FAQ
-**  Contact Info: webgoat@owasp.org (Direct to Bruce Mayhew)
-**  Mailing List: owasp-webgoat@lists.owasp.org (WebGoat Community - For most questions)
-**
-**********
+Introduction:
 
-Thank you for downloading WebGoat!
+This document contains instructions on how to configure and install the 
+downloaded ASPX application. It assumes that:
 
-This program is a demonstration of common server-side
-application flaws.  The exercises are intended to
-be used by people to learn about application penetration
-testing techniques.
+1. You have some basic knowledge of server and database technologies.
+2. You have the IIS 5.0 web server.
+3. You have database server as well.
+4. You have .NET Framework SDK.
 
+You should download the application. It's already compiled.
+You should find the following components contained in the zip archive:
 
-WARNING 1: While running this program your machine will be 
-extremely vulnerable to attack. You should to disconnect
-from the Internet while using this program.
+1. ASPX files as template files one per each page.
+2. Binary stuff with code of application in the 'bin' subfolder.
+3. A database file or a SQL script file that can be used to recreate 
+   the database in the 'database' subfolder.
+4. A folder containing images if applicable.
 
-WARNING 2: This program is for educational purposes only. If you
-attempt these techniques without authorization, you are very
-likely to get caught.  If you are caught engaging in unauthorized
-hacking, most companies will fire you. Claiming that you were
-doing security research will not work as that is the first thing
-that all hackers claim.
+Installation:
 
-You can find more information about WebGoat at:
-https://github.com/WebGoat/
+The installation process is pretty straightforward and requires minimal 
+adjustment of the application files. Proceed as follows:
 
-----------------------------------------------------------------------------------------
-Easy Run Instructions ( For non-developers )
-----------------------------------------------------------------------------------------
-Follow these instructions if you simply wish to run WebGoat
+1. Unzip the files into a folder within your web server hierarchy from 
+   where the application will be served. Ensure that the folder name does 
+   not have spaces in it. During the process of unzipping, make sure that 
+   the files are unzipped to their respective folders. Don't simply open 
+   the zip archive and drag all the files to the same folders. For the 
+   application to work correctly, some files such as the image files need 
+   to be in specific folders.
 
-    Prerequisites:  Java VM >= 1.6 installed ( JDK 1.7 recommended)
-    Download the executable jar file to any location of your choice from:
-https://webgoat.atlassian.net/builds/browse/WEB-WGM/latestSuccessful/artifact/shared/WebGoat-Embedded-Tomcat/WebGoat-6.0.1-war-exec.jar
-    Run it using java:
-        java -jar WebGoat-6.0-exec-war.jar
+2. You need  to  create  the  Web Application  in the same folder,  in  which 
+   you unzip files.  To do that:
+     a) Open Internet Information Server managment console
+     b) Find you folder in  the  list,  mouse  right click and select "Properties"
+     c) Click on "Create Application" in  the " Directory"  Tab and enter 
+        the name of  the new application.
+   (Important: You should create  the Web Application for each example's folder. 
+   You can not create  the application and unzip example into the subfolder)
+ 
+3. Load Visual Studio Project.  To do that double click on the file 
+   with .csproj extension. After the loading completion, press Ctrl+Shift+B,
+   for the project compilation
+   --or--
+   Run MakeAll.bat, which placed in the same directory for the project compilation.
+   
 
-    Then navigate in your browser to:
-    http://localhost:8080/WebGoat
+4. The next task is to alter the database connection string to reflect the 
+   current location/name of the database. Follow the relevant instructions 
+   below depending on the type of connection that you want to use:
 
-    If you would like to change the port or other options, use:
-    java -jar WebGoat-6.0-exec-war.jar --help
+   ODBC Connection
 
-----------------------------------------------------------------------------------------
-For Developers 
-----------------------------------------------------------------------------------------
-Follow These instructions if you wish to run Webgoat and modify the source code as well.
+   To Configure an ODBC connection:
 
-    Prerequisites:
-        * Java >= 1.6 ( JDK 1.7 recommended )
-        * Maven > 2.0.9
-        *Your favorite IDE, with Maven awareness: Netbeans/IntelliJ/Eclipse with m2e installed
-        * Git, or Git support in your IDE
-        
-        WebGoat source code
-            WebGoat source code can be downloaded at: 
-                  https://github.com/WebGoat/WebGoat
+   (a) Use the ODBC option in Control Panel to setup a system DSN for the 
+       application database. The database file is located in the main folder 
+       of the application. In the interest of security, you can and are 
+       encouraged to move the database file to a more secure location outside 
+       the web server hierarchy. Your application will work fine as long as the
+       DSN you configure points to the correct location of the database file. 
+       Ensure that the DSN is a system DSN so that it will be available to all 
+       users.
 
-        If you are setting up an IDE, Netbeans 8.0 contains the Maven and Git support you need:
-            https://netbeans.org/downloads/
-	
----------------------------------
-Building the project (Developers)
----------------------------------
+   (b) Open the file 'Config.web' which is in the main folder of your 
+       application path.
 
-Using a command shell/window:
+   (c) Look for the connection string statement which begins with the word  
+       '<add key="sDBConnectionString" ...'. Its basic format is:
 
-> cd webgoat
-> mvn clean package
+       <add key="sDBConnectionString" value="Provider=MSDASQL;Persist Security Info=False;User ID=some_login;Data Source=some_data_source;Pwd=some_password" />
 
-After opening the project in Netbeans or Eclipse, you can easily run the project using maven:
+   (d) Using the guidelines below, change the statement to the following:
 
-> mvn tomcat:run-war
+       <add key="sDBConnectionString" value="Provider=MSDASQL;Persist Security Info=False;User ID=Admin;Data Source=Bookstore" />
+       where:
 
-Maven will run the project in an embedded tomcat.
+       Provider: It refers to the database provider to be used for the 
+                 connection. For an MS Access database connection, this 
+                 should be 'MSDASQL'. If left off, this option defaults 
+                 to MSDASQL which is Microsoft's OLE DB Provider for ODBC,  
+                 but you should explicitly specify it for the sake of clarity.
 
-the package phase also builds an executable jar file. You can run it using:
-cd target
-java -jar WebGoat-6.0-exec-war.jar
-http://localhost:8080/WebGoat
+       Persist Security Info: Set this value to false to disallow saving of the
+                 security information or true if you want the security 
+                 information to be saved.
+
+       User ID and Password: This is used to specify user authentication values. 
+                 A user name of "Admin" and a blank password are the defaults.
+
+       Data Source: This is the name of the ODBC DSN you created in Control Panel.
+
+  Jet Database Connection
+
+  Microsoft.Jet.OLEDB.4.0 is the OLE DB provider for Access. To connect to 
+  an Access database using this provider, another attribute required to make 
+  a connection is the Data Source attribute which is used to specify the full 
+  path and the file name of the Access .mdb file. A minimal OLE DB Provider 
+  for Jet connection string should look the following:
+
+  strConn = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=C:\path\filename.mdb"
+
+  For the security purposes, you might want to place your database file not 
+  into the same folder where the web pages are located. For instance, you 
+  could place your database into the folder c:\Projects\Databases\AccessDB.mdb 
+  which is not in the web server hierarchy. The corresponding Jet connection 
+  string for the above database should be:
+
+  strConn = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source= c:\Projects\Databases\AccessDB.mdb"
+
+  Other commonly used parameters are User ID and Password which are used to 
+  specify thw user authentication values. A user name of "Admin" and a blank 
+  password are the defaults, resulting in a connection string similarly to 
+  that shown below:
+
+  strConn = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source= c:\Projects\Databases\AccessDB.mdb; User ID=admin; Password="
+
